@@ -103,12 +103,40 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
             os.path.join(self.test_source, "label"),
             test_aug,
         )
-
+    
     def setup_infer(self):
-        pass
+        if self.infer is None:
+            return
+
+        self.infer_dataset = ImageFolderInferDataset(
+            self.infer, transform=self.test_aug
+        )
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         pass
+        if stage != Stages.INFER:
+            logging.warning(f"`save_preds` method called for {stage} stage.")
+            return
+
+        dst_path.mkdir(parents=True, exist_ok=True)
+        
+        # for i, (image_path, _) in enumerate(self.infer_dataset):
+        #     preds_path = dst_path / f"{i}.dcm"
+        #     img = cv2.imread(str(image_path))
+        #     pred = preds[i].cpu().numpy().squeeze().astype("uint8")
+        #     pred = cv2.resize(pred, (img.shape[1], img.shape[0]), interpolation=cv2.INTER_NEAREST)
+        #     pred_dcm = img_to_dicom(pred)
+        #     pred_dcm.save_as(str(preds_path))
+        for i, m in enumerate(pred):
+            mask = m.clone()
+            mask = mask[0]
+            mask[mask < 0.1] = 0
+            mask[mask != 0] = 1
+            # img = dicom_to_img(dicoms[i])
+            # img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+            # img[mask != 0] = 255
+        logging.info(f"Saved results to: {dst_path}")
+
 
 
 class DicomDirSegmentationLightningDataModule(
@@ -225,3 +253,4 @@ class DicomDirSegmentationLightningDataModule(
                 os.path.join(png_path, dicom.replace("dcm", "png")),
             )
         self.predict_dataset = self.dataset(png_path, self.test_aug, True)
+

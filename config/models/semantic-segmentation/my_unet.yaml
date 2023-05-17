@@ -1,0 +1,8 @@
+_target_: innofw.core.models.torch.architectures.segmentation.unet.UNet
+description: unet model 
+name: unet
+enc_chs: [1, 64, 128, 256, 512, 1024]
+dec_chs: [1024, 512, 256, 128, 64]
+retain_dim: True
+out_sz: [1024, 1024]
+num_class: 5

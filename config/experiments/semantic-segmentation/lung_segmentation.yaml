@@ -1,17 +1,21 @@
 # @package _global_
 defaults:
-  - override /models: semantic-segmentation/deeplabv3plus.yaml
+  - override /models: semantic-segmentation/my_unet.yaml
   - override /datasets: semantic-segmentation/lung_segmentation.yaml
-  - override /augmentations_train: none #segmentation_stroke.yaml
-  - override /augmentations_val: none
+  - override /augmentations_train: none # lung_augmentation.yaml
+  - override /augmentations_val: none # lung_augmentation.yaml
   - override /augmentations_test: none
   - override /losses: segmentation_losses.yaml
-models:
-  in_channels: 1
+  - override /loggers: wandb
+  - override /optimizers: adam
 project: "segmentation"
 task: "image-segmentation"
 random_seed: 42
 stop_param: 10
-epochs: 300
+epochs: 5
 weights_freq: 1
-batch_size: 10
+batch_size: 5
+wandb:
+  entity: drxelt1
+  project: goat
+

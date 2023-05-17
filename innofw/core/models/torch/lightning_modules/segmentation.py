@@ -4,6 +4,7 @@ __all__ = ["SegmentationLM"]
 from typing import Any, Optional
 
 # third-party libraries
+import numpy as np
 import hydra
 from omegaconf import DictConfig
 from pytorch_lightning.utilities.types import STEP_OUTPUT
@@ -12,6 +13,7 @@ from torchmetrics.classification import (
     BinaryRecall,
     BinaryPrecision,
     BinaryJaccardIndex,
+    # MultilabelAccuracy,
 )
 import torch
 from torchmetrics import MetricCollection
@@ -76,6 +78,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
                 BinaryPrecision(threshold=threshold),
                 BinaryRecall(threshold=threshold),
                 BinaryJaccardIndex(threshold=threshold),
+                # MultilabelAccuracy(threshold=threshold, num_labels=4)
             ]
         )  # todo: it is slow
 

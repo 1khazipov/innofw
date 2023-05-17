@@ -93,10 +93,13 @@ class UNet(nn.Module):
         self.retain_dim = retain_dim
         self.out_sz = out_sz
 
+
     def forward(self, x):
+        #x = x.unsqueeze(1).float()
         enc_ftrs = self.encoder(x)
         out = self.decoder(enc_ftrs[::-1][0], enc_ftrs[::-1][1:])
         out = self.head(out)
         if self.retain_dim:
-            out = F.interpolate(out, self.out_sz)
+            size = tuple(self.out_sz)
+            out = F.interpolate(out, size)
         return out

@@ -42,12 +42,22 @@ class SegmentationDataset(Dataset):
             return image
         if self.maskPaths[idx].suffix == '.npy':
             mask = np.load(str(self.maskPaths[idx]))
-            print(mask.shape)
         else:
             mask = cv2.imread(str(self.maskPaths[idx]), 0)
         image, mask = self.transforms(image, mask)
         mask = mask[None, :]
+        # image = np.squeeze(image)
+        # mask = np.squeeze(mask)
         return {
             SegDataKeys.image: image.float(),
             SegDataKeys.label: mask.float(),
+            # [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            # [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            # [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            # [0, 0, 0, 2, 2, 0, 0, 0, 0]
+            # [0, 0, 0, 2, 2, 0, 0, 0, 0]
+            # [0, 0, 0, 2, 0, 0, 0, 1, 1]
+            # [0, 0, 0, 0, 0, 0, 1, 1, 1]
+            # [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            # [0, 0, 0, 0, 0, 0, 0, 0, 0]
         }
