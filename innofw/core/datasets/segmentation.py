@@ -2,6 +2,7 @@ from pathlib import Path
 
 import cv2
 from torch.utils.data import Dataset
+import numpy as np
 
 from innofw.constants import SegDataKeys
 
@@ -39,7 +40,11 @@ class SegmentationDataset(Dataset):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         if self.maskPaths is None:
             return image
-        mask = cv2.imread(str(self.maskPaths[idx]), 0)
+        if self.maskPaths[idx].suffix == '.npy':
+            mask = np.load(str(self.maskPaths[idx]))
+            print(mask.shape)
+        else:
+            mask = cv2.imread(str(self.maskPaths[idx]), 0)
         image, mask = self.transforms(image, mask)
         mask = mask[None, :]
         return {
