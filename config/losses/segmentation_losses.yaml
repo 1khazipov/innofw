@@ -2,6 +2,7 @@ name: Segmentation
 description: Average of Jaccard and BinaryFocal losses
 task:
   - image-segmentation
+  - multiclass-image-segmentation
 
 implementations:
   torch:

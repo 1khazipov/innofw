@@ -1,23 +1,40 @@
 # @package _global_
 defaults:
-
-  - override /models: semantic-segmentation/my_unet.yaml
+  - override /models: semantic-segmentation/deeplabv3plus.yaml
   - override /datasets: semantic-segmentation/lung_segmentation.yaml
-  - override /augmentations_train: none # lung_augmentation.yaml
-  - override /augmentations_val: none # lung_augmentation.yaml
+  - override /optimizers: adam.yaml
+  - override /augmentations_train: none
+  - override /augmentations_val: none
   - override /augmentations_test: none
-  - override /losses: segmentation_losses.yaml
-  - override /loggers: wandb
-  - override /optimizers: adam
+  - override /callbacks: multiclass_segmentation
+  - override /losses: segmentation_losses
+#  - override /loggers: wandb
 
-project: "segmentation"
-task: "image-segmentation"
+n_classes: 5
+
+models:
+  in_channels: 1
+  classes: ${n_classes}
+  encoder_name: resnet34
+
+optimizers:
+  lr: 0.00477
+
+project: "organs segmentation"
+task: "multiclass-image-segmentation"
 random_seed: 42
-stop_param: 10
-
-epochs: 5
 weights_freq: 1
-batch_size: 5
-wandb:
-  entity: drxelt1
-  project: goat
+batch_size: 8
+epochs: 25
+accelerator: gpu
+devices: 1
+override hydra/job_logging: stdout
+
+#wandb:
+#  enable: True
+#  tags:
+#    - "best_from_sweep"
+#  project: uw_madison
+#  entity: "k-galliamov"
+#  job_type: training
+
